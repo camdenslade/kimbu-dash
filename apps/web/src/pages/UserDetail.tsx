@@ -188,7 +188,7 @@ export function UserDetail() {
                       />
                     </td>
                     <td className="px-4 py-2.5 font-mono text-xs text-muted-foreground">{log.ipAddress ?? '—'}</td>
-                    <td className="px-4 py-2.5 text-xs text-muted-foreground">{new Date(log.createdAt).toLocaleString()}</td>
+                    <td className="px-4 py-2.5 text-xs text-muted-foreground">{log.timestamp ? new Date(log.timestamp).toLocaleString() : 'Invalid Date'}</td>
                   </tr>
                 ))}
               </tbody>
