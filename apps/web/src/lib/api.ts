@@ -120,12 +120,16 @@ export interface Session {
 export interface AuditLog {
   id: string;
   userId?: string;
+  appId?: string;
   eventType: string;
   status: string;
   provider?: string;
   ipAddress?: string;
+  userAgent?: string;
+  deviceId?: string;
   failureReason?: string;
-  createdAt: string;
+  metadata?: Record<string, any>;
+  timestamp: string;
 }
 
 export interface App {
