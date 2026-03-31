@@ -1,19 +1,36 @@
-import { Button } from "@workspace/ui/components/button"
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { ThemeProvider } from './components/theme-provider';
+import { queryClient } from './lib/queryClient';
+import { Layout } from './components/layout/Layout';
+import { Login } from './pages/Login';
+import { Overview } from './pages/Overview';
+import { Users } from './pages/Users';
+import { UserDetail } from './pages/UserDetail';
+import { Apps } from './pages/Apps';
+import { Sessions } from './pages/Sessions';
+import { AuditLogs } from './pages/AuditLogs';
+import { Settings } from './pages/Settings';
 
 export function App() {
   return (
-    <div className="flex min-h-svh p-6">
-      <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-        <div>
-          <h1 className="font-medium">Project ready!</h1>
-          <p>You may now add components and start building.</p>
-          <p>We&apos;ve already added the button component for you.</p>
-          <Button className="mt-2">Button</Button>
-        </div>
-        <div className="text-muted-foreground font-mono text-xs">
-          (Press <kbd>d</kbd> to toggle dark mode)
-        </div>
-      </div>
-    </div>
-  )
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider defaultTheme="dark" storageKey="kimbu-theme">
+        <BrowserRouter>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route element={<Layout />}>
+              <Route index element={<Overview />} />
+              <Route path="users" element={<Users />} />
+              <Route path="users/:id" element={<UserDetail />} />
+              <Route path="apps" element={<Apps />} />
+              <Route path="sessions" element={<Sessions />} />
+              <Route path="audit-logs" element={<AuditLogs />} />
+              <Route path="settings" element={<Settings />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </ThemeProvider>
+    </QueryClientProvider>
+  );
 }
