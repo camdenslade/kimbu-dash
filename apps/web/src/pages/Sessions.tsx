@@ -41,11 +41,11 @@ export function Sessions() {
             ) : (
               sessions.map((s) => (
                 <tr key={s.id} className="border-b last:border-0">
-                  <td className="px-4 py-2.5 font-mono text-xs">{s.userId.slice(0, 8)}…</td>
-                  <td className="px-4 py-2.5 font-mono text-xs">{s.ipAddress}</td>
-                  <td className="px-4 py-2.5 text-muted-foreground">{s.provider}</td>
-                  <td className="px-4 py-2.5 text-xs text-muted-foreground">{new Date(s.createdAt).toLocaleString()}</td>
-                  <td className="px-4 py-2.5 text-xs text-muted-foreground">{new Date(s.expiresAt).toLocaleString()}</td>
+                  <td className="px-4 py-2.5 font-mono text-xs">{s.userId?.slice(0, 8) ?? 'N/A'}…</td>
+                  <td className="px-4 py-2.5 font-mono text-xs">{s.ipAddress ?? 'N/A'}</td>
+                  <td className="px-4 py-2.5 text-muted-foreground">{s.deviceType || s.provider || 'Unknown'}</td>
+                  <td className="px-4 py-2.5 text-xs text-muted-foreground">{s.createdAt ? new Date(s.createdAt).toLocaleString() : 'Invalid Date'}</td>
+                  <td className="px-4 py-2.5 text-xs text-muted-foreground">{s.expiresAt ? new Date(s.expiresAt).toLocaleString() : 'Invalid Date'}</td>
                   <td className="px-4 py-2.5">
                     <button
                       onClick={() => revokeMutation.mutate(s.id)}

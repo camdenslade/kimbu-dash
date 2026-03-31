@@ -5,6 +5,21 @@ function getToken() {
   return localStorage.getItem('kimbu_access_token');
 }
 
+// Transform snake_case to camelCase
+function toCamelCase(obj: any): any {
+  if (Array.isArray(obj)) {
+    return obj.map(toCamelCase);
+  }
+  if (obj !== null && typeof obj === 'object') {
+    return Object.keys(obj).reduce((acc, key) => {
+      const camelKey = key.replace(/_([a-z])/g, (_, char) => char.toUpperCase());
+      acc[camelKey] = toCamelCase(obj[key]);
+      return acc;
+    }, {} as any);
+  }
+  return obj;
+}
+
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   const token = getToken();
   const res = await fetch(`${BASE_URL}${path}`, {
@@ -22,7 +37,8 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
     throw new Error(err.message ?? 'Request failed');
   }
 
-  return res.json();
+  const data = await res.json();
+  return toCamelCase(data);
 }
 
 export const api = {
@@ -86,12 +102,19 @@ export interface Tokens {
 export interface Session {
   id: string;
   userId: string;
+  appId: string;
   deviceId: string;
+  deviceName?: string;
+  deviceType?: string;
   ipAddress: string;
   userAgent: string;
-  provider: string;
+  isActive: boolean;
   createdAt: string;
+  updatedAt: string;
+  lastActiveAt: string;
   expiresAt: string;
+  metadata?: Record<string, any>;
+  provider?: string; // Derived from deviceType or auth method
 }
 
 export interface AuditLog {
