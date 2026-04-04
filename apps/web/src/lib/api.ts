@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_URL ?? 'https://kimbu.cslade.space';
+const BASE_URL = import.meta.env.VITE_API_URL ?? 'https://api.kimbu.cslade.space';
 const APP_ID = import.meta.env.VITE_APP_ID ?? 'dashboard';
 
 function getToken() {
@@ -37,6 +37,7 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
     throw new Error(err.message ?? 'Request failed');
   }
 
+  if (res.status === 204) return undefined as T;
   const data = await res.json();
   return toCamelCase(data);
 }
@@ -65,6 +66,23 @@ export const api = {
       request<App>('/v1/admin/apps', { method: 'POST', body: JSON.stringify(data) }),
     delete: (id: string) => request(`/v1/admin/apps/${id}`, { method: 'DELETE' }),
   },
+  pools: {
+    get: (id: string) => request<Pool>(`/v1/admin/pools/${id}`),
+    users: (id: string) => request<PoolUser[]>(`/v1/admin/pools/${id}/users`),
+    createUser: (id: string, data: { email: string; password: string; name?: string }) =>
+      request<User>(`/v1/admin/pools/${id}/users`, { method: 'POST', body: JSON.stringify(data) }),
+    updateConfig: (id: string, config: Partial<PoolConfig>) =>
+      request<Pool>(`/v1/admin/pools/${id}/config`, { method: 'PATCH', body: JSON.stringify(config) }),
+    regenerateApiKey: (id: string) =>
+      request<Pool>(`/v1/admin/pools/${id}/api-key`, { method: 'POST', body: JSON.stringify({}) }),
+    roles: (id: string) => request<Role[]>(`/v1/admin/pools/${id}/roles`),
+    createRole: (id: string, data: { name: string; description?: string }) =>
+      request<Role>(`/v1/admin/pools/${id}/roles`, { method: 'POST', body: JSON.stringify(data) }),
+    assignRole: (id: string, userId: string, roleName: string) =>
+      request(`/v1/admin/pools/${id}/users/${userId}/roles/${roleName}`, { method: 'POST', body: JSON.stringify({}) }),
+    removeRole: (id: string, userId: string, roleName: string) =>
+      request(`/v1/admin/pools/${id}/users/${userId}/roles/${roleName}`, { method: 'DELETE' }),
+  },
   sessions: {
     list: () => request<Session[]>('/v1/admin/sessions'),
     revoke: (id: string) => request(`/v1/admin/sessions/${id}`, { method: 'DELETE' }),
@@ -86,9 +104,9 @@ export interface User {
   phone?: string;
   name?: string;
   avatar?: string;
+  status?: string;
   emailVerified: boolean;
   phoneVerified: boolean;
-  disabled?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -114,7 +132,6 @@ export interface Session {
   lastActiveAt: string;
   expiresAt: string;
   metadata?: Record<string, any>;
-  provider?: string; // Derived from deviceType or auth method
 }
 
 export interface AuditLog {
@@ -134,6 +151,41 @@ export interface AuditLog {
 
 export interface App {
   id: string;
+  name: string;
+  description?: string;
+  slug: string;
+  status: string;
+  apiKey?: string;
+  apiSecret?: string;
+  config: PoolConfig;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Pool extends App {
+  userCount: number;
+  sessionCount: number;
+}
+
+export interface PoolConfig {
+  mfaRequired?: boolean;
+  sessionDurationHours?: number;
+  oauthRedirectUris?: string[];
+  passwordMinLength?: number;
+  passwordRequireUppercase?: boolean;
+  passwordRequireNumbers?: boolean;
+  passwordRequireSymbols?: boolean;
+}
+
+export interface PoolUser extends User {
+  membershipId: string;
+  joinedAt: string;
+  roles: string[];
+}
+
+export interface Role {
+  id: string;
+  appId: string;
   name: string;
   description?: string;
   createdAt: string;

@@ -77,7 +77,7 @@ export function UserDetail() {
             disabled={disableMutation.isPending}
           >
             <Ban className="h-3.5 w-3.5 mr-1.5" />
-            {user.disabled ? 'Enable' : 'Disable'}
+            {user.status === 'suspended' ? 'Enable' : 'Disable'}
           </Button>
           <Button
             variant="destructive"
@@ -101,7 +101,7 @@ export function UserDetail() {
         <div>
           <p className="text-xs text-muted-foreground">Status</p>
           <div className="mt-0.5">
-            {user.disabled ? <Badge label="Disabled" variant="danger" /> : <Badge label="Active" variant="success" />}
+            {user.status === 'suspended' ? <Badge label="Disabled" variant="danger" /> : <Badge label="Active" variant="success" />}
           </div>
         </div>
         <div>
@@ -148,7 +148,7 @@ export function UserDetail() {
                 {sessions.map((s) => (
                   <tr key={s.id} className="border-b last:border-0">
                     <td className="px-4 py-2.5 font-mono text-xs">{s.ipAddress}</td>
-                    <td className="px-4 py-2.5 text-muted-foreground">{s.provider}</td>
+                    <td className="px-4 py-2.5 text-muted-foreground">{s.deviceType ?? 'Unknown'}</td>
                     <td className="px-4 py-2.5 text-muted-foreground text-xs">{new Date(s.createdAt).toLocaleString()}</td>
                     <td className="px-4 py-2.5 text-muted-foreground text-xs">{new Date(s.expiresAt).toLocaleString()}</td>
                   </tr>

@@ -16,7 +16,7 @@ import { api } from '../../lib/api';
 const nav = [
   { to: '/', label: 'Overview', icon: LayoutDashboard, exact: true },
   { to: '/users', label: 'Users', icon: Users },
-  { to: '/apps', label: 'Apps', icon: AppWindow },
+  { to: '/apps', label: 'User Pools', icon: AppWindow },
   { to: '/sessions', label: 'Sessions', icon: MonitorSmartphone },
   { to: '/audit-logs', label: 'Audit Logs', icon: ScrollText },
   { to: '/settings', label: 'Settings', icon: Settings },

@@ -8,6 +8,7 @@ import { Overview } from './pages/Overview';
 import { Users } from './pages/Users';
 import { UserDetail } from './pages/UserDetail';
 import { Apps } from './pages/Apps';
+import { PoolDetail } from './pages/PoolDetail';
 import { Sessions } from './pages/Sessions';
 import { AuditLogs } from './pages/AuditLogs';
 import { Settings } from './pages/Settings';
@@ -24,6 +25,7 @@ export function App() {
               <Route path="users" element={<Users />} />
               <Route path="users/:id" element={<UserDetail />} />
               <Route path="apps" element={<Apps />} />
+              <Route path="apps/:id" element={<PoolDetail />} />
               <Route path="sessions" element={<Sessions />} />
               <Route path="audit-logs" element={<AuditLogs />} />
               <Route path="settings" element={<Settings />} />
